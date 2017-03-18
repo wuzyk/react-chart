@@ -1,0 +1,24 @@
+{
+  "extends": "airbnb",
+
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+
+  "plugins": [
+    "react"
+  ],
+
+  globals: {
+    document: true,
+    window: true
+  },
+
+  rules: {
+    "react/prefer-stateless-function": "off",
+    "no-use-before-define": "off",
+    "no-restricted-properties": "off"
+  }
+}
