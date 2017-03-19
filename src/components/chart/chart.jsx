@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import './chart.css';
 
@@ -73,6 +73,7 @@ export default class Chart extends React.Component {
       const month = date.getMonth();
 
       xLabels.push({
+        key: date.getMonth() + date.getYear(),
         month: MONTH_TITLE[date.getMonth()],
         monthShort: MONTH_SHORT_TITLE[date.getMonth()],
         year: month === 0 || xLabels.length === 0 ? date.getFullYear() : null,
@@ -169,7 +170,7 @@ export default class Chart extends React.Component {
         </div>
         <div className="chart-x-axis" ref={ref => (this.xAxisRef = ref)} style={{ left: viewport.left, width: viewport.width, visibility: showLongAxisTitles ? 'visible' : 'hidden' }}>
           {xLabels.map(label => (
-            <div className="chart-x-label">
+            <div className="chart-x-label" key={label.key}>
               <div className="chart-x-label__month">{label.month}</div>
               {label.year ? <div className="chart-x-label__year">{label.year}</div> : ''}
             </div>
@@ -177,7 +178,7 @@ export default class Chart extends React.Component {
         </div>
         <div className="chart-x-axis" ref={ref => (this.xAxisShortRef = ref)} style={{ left: viewport.left, width: viewport.width, visibility: showShortAxisTitles ? 'visible' : 'hidden' }}>
           {this.state.xLabels.map(label => (
-            <div className="chart-x-label">
+            <div className="chart-x-label" key={`${label.key}short`}>
               <div className="chart-x-label__month">{label.monthShort}</div>
               {label.year ? <div className="chart-x-label__year">{label.year}</div> : ''}
             </div>
@@ -193,7 +194,10 @@ export default class Chart extends React.Component {
 }
 
 Chart.propTypes = {
-  data: React.PropTypes.isRequired,
+  data: PropTypes.arrayOf(PropTypes.shape({
+    date: PropTypes.string.isRequired,
+    value: PropTypes.number.isRequired,
+  })).isRequired,
 };
 
 function getNumberOrder(number) {
