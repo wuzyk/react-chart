@@ -10,8 +10,17 @@ render();
 function render() {
   ReactDOM.render(
     <div>
-      <Chart data={generateData('2015-01-01', 365, 10, 100)} height={250} />
       <button onClick={render}>Generate new data</button>
+
+      <div className="chart-box">
+        <Chart data={generateData('2015-01-01', 365, 10, 100)} height={250} />
+      </div>
+      <div className="chart-box">
+        <Chart data={generateData('2015-03-01', 700, 10, 100)} height={250} />
+      </div>
+      <div className="chart-box">
+        <Chart data={generateData('2015-03-03', 28, 10, 100)} height={250} />
+      </div>
     </div>,
     document.getElementById('app'),
   );
@@ -32,7 +41,6 @@ function generateData(startDate, daysCount, minValue, maxValue) {
 
     const date = new Date(currentDate);
     date.setDate(date.getDate() + 1);
-
 
     currentDate = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}`; // eslint-disable-line
   }

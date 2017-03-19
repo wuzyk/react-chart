@@ -59,7 +59,7 @@ export default class Chart extends React.Component {
     const { left, height, width } = this.mainRef.getBoundingClientRect();
     const offsetX = event.clientX - left - viewport.left;
     const pointPosition = Math.round((offsetX / viewport.width) * pointsCount);
-    const currentPoint = points[skipPointsCount + pointPosition];
+    const currentPoint = points[pointPosition - skipPointsCount];
 
     let tooltipPosition = {};
     let tooltipData = {};
@@ -119,7 +119,7 @@ export default class Chart extends React.Component {
       const month = date.getMonth();
 
       xLabels.push({
-        key: date.getMonth() + date.getYear(),
+        key: '' + date.getMonth() + date.getFullYear(),
         month: MONTH_TITLE[date.getMonth()],
         monthShort: MONTH_SHORT_TITLE[date.getMonth()],
         year: month === 0 || xLabels.length === 0 ? date.getFullYear() : null,
@@ -167,6 +167,7 @@ export default class Chart extends React.Component {
     const skipPointsCount = minDate.getDate() - 1;
 
     minDate.setDate(1);
+    maxDate.setDate(1);
     maxDate.setMonth(maxDate.getMonth() + 1);
     maxDate.setDate(0);
 

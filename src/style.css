@@ -6,3 +6,8 @@ body
   font-size: 62.5%;
   font-family: sans-serif;
 }
+
+.chart-box
+{
+  margin: 1rem;
+}
