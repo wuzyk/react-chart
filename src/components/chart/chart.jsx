@@ -26,13 +26,14 @@ export default class Chart extends React.Component {
     };
 
     this.setViewport = this.setViewport.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
+    this.onMove = this.onMove.bind(this);
   }
 
   componentDidMount() {
     this.setScale();
     window.addEventListener('resize', this.setViewport);
-    this.mainRef.addEventListener('mousemove', this.onMouseMove);
+    this.mainRef.addEventListener('mousemove', this.onMove);
+    this.mainRef.addEventListener('touchmove', this.onMove);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -51,13 +52,14 @@ export default class Chart extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.setViewport);
-    this.mainRef.removeEventListener('mousemove', this.onMouseMove);
+    this.mainRef.removeEventListener('mousemove', this.onMove);
+    this.mainRef.removeEventListener('touchmove', this.onMove);
   }
 
-  onMouseMove(event) {
+  onMove(event) {
     const { viewport, points, pointsCount, skipPointsCount } = this.state;
     const { left, height, width } = this.mainRef.getBoundingClientRect();
-    const offsetX = event.clientX - left - viewport.left;
+    const offsetX = event.pageX - left - viewport.left;
     const pointPosition = Math.round((offsetX / viewport.width) * pointsCount);
     const currentPoint = points[pointPosition - skipPointsCount];
 
@@ -119,7 +121,7 @@ export default class Chart extends React.Component {
       const month = date.getMonth();
 
       xLabels.push({
-        key: '' + date.getMonth() + date.getFullYear(),
+        key: String(date.getMonth()) + date.getFullYear(),
         month: MONTH_TITLE[date.getMonth()],
         monthShort: MONTH_SHORT_TITLE[date.getMonth()],
         year: month === 0 || xLabels.length === 0 ? date.getFullYear() : null,
