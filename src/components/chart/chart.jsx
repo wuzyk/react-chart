@@ -6,8 +6,11 @@ const GRID_LINE_COUNT = 5;
 const MILLISECONDS_IN_DAY = 1000 * 3600 * 24;
 const PADDING_TOP = 20;
 const PADDING_RIGHT = 20;
+const TOOLTIP_MARGIN_X = 5;
+const TOOLTIP_MARGIN_Y = 10;
 const MONTH_TITLE = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 const MONTH_SHORT_TITLE = ['Янв', 'Фев', 'Маh', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+const MONTH_FORMAT_TITLE = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 
 export default class Chart extends React.Component {
   constructor(props) {
@@ -19,15 +22,17 @@ export default class Chart extends React.Component {
       points: [],
       gridLines: [],
       viewport: {},
-      showLongAxisTitles: true,
+      currentPoint: null,
     };
 
     this.setViewport = this.setViewport.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
   }
 
   componentDidMount() {
     this.setScale();
     window.addEventListener('resize', this.setViewport);
+    this.mainRef.addEventListener('mousemove', this.onMouseMove);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -46,6 +51,46 @@ export default class Chart extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.setViewport);
+    this.mainRef.removeEventListener('mousemove', this.onMouseMove);
+  }
+
+  onMouseMove(event) {
+    const { viewport, points, pointsCount, skipPointsCount } = this.state;
+    const { left, height, width } = this.mainRef.getBoundingClientRect();
+    const offsetX = event.clientX - left - viewport.left;
+    const pointPosition = Math.round((offsetX / viewport.width) * pointsCount);
+    const currentPoint = points[skipPointsCount + pointPosition];
+
+    let tooltipPosition = {};
+    let tooltipData = {};
+    if (currentPoint) {
+      const tooltipBox = this.tooltipRef
+        ? this.tooltipRef.getBoundingClientRect()
+        : { width: 0, height: 0 };
+
+      tooltipPosition = {
+        left: pointPosition <= pointsCount / 2 ? currentPoint[0] + TOOLTIP_MARGIN_X : 'auto',
+        right: pointPosition > pointsCount / 2 ? (width - currentPoint[0]) + TOOLTIP_MARGIN_X : 'auto',
+        bottom: Math.min((height - currentPoint[1]) + TOOLTIP_MARGIN_Y, height - tooltipBox.height),
+      };
+
+      const data = this.props.data;
+      const pointData = data[pointPosition - skipPointsCount];
+      const prevPointData = data[pointPosition - skipPointsCount - 1];
+      const date = new Date(pointData.date);
+
+      tooltipData = {
+        date: `${date.getDate()} ${MONTH_FORMAT_TITLE[date.getMonth()]} ${date.getFullYear()}`,
+        value: pointData.value.toFixed(2),
+        delta: prevPointData ? (pointData.value - prevPointData.value).toFixed(2) : 0,
+      };
+    }
+
+    this.setState({
+      currentPoint,
+      tooltipData,
+      tooltipPosition,
+    });
   }
 
   setScale() {
@@ -144,6 +189,8 @@ export default class Chart extends React.Component {
     this.setState({
       gridLines,
       points,
+      pointsCount,
+      skipPointsCount,
       showLongAxisTitles,
       showShortAxisTitles,
     });
@@ -156,6 +203,9 @@ export default class Chart extends React.Component {
       gridLines,
       xLabels,
       yLabels,
+      currentPoint,
+      tooltipPosition,
+      tooltipData,
       showLongAxisTitles,
       showShortAxisTitles,
     } = this.state;
@@ -192,7 +242,33 @@ export default class Chart extends React.Component {
         <svg className="chart-svg">
           <path className="chart-grid" d={gridLines.map(y => `M ${viewport.left} ${y} H ${viewport.left + viewport.width}`).join(' ')} />
           <polyline className="chart-seria" points={points.join(' ')} fill="none" />
+          {currentPoint &&
+            <g className="chart-current">
+              <path
+                className="chart-current__path"
+                d={`M ${currentPoint[0]} ${currentPoint[1]} V ${viewport.top + viewport.height}`}
+              />
+              <circle
+                className="chart-current__point"
+                cx={currentPoint[0]}
+                cy={currentPoint[1]} r="4"
+              />
+            </g>
+          }
         </svg>
+        {currentPoint && tooltipPosition && tooltipData &&
+          <div
+            className="chart-tooltip"
+            style={tooltipPosition}
+            ref={ref => (this.tooltipRef = ref)}
+          >
+            <div className="chart-tooltip__date">{tooltipData.date}</div>
+            <div className="chart-tooltip__value">
+              ${tooltipData.value}
+              <span className={`chart-tooltip__delta ${tooltipData.delta < 0 ? 'chart-tooltip__delta_negative' : ''}`}>{Math.abs(tooltipData.delta)}</span>
+            </div>
+          </div>
+        }
       </div>
     );
   }

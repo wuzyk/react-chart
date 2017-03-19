@@ -65,3 +65,85 @@
 {
   font-size: 1.2rem;
 }
+
+/* current point */
+
+.chart-current
+{
+  display: none;
+}
+
+.chart:hover .chart-current
+{
+  display: block;
+}
+
+.chart-current__path
+{
+  stroke: #d5d8d9;
+  stroke-dasharray: 5 5;
+}
+
+.chart-current__point
+{
+  fill: #74a3c7;
+  stroke: white;
+  stroke-width: 2;
+}
+
+/* tooltip */
+
+.chart-tooltip
+{
+  display: none;
+  position: absolute;
+  padding: 1rem 1.5rem;
+  font-size: 1.3rem;
+  color: #525a69;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 3px 1px rgba(0, 0, 0, 0.15);
+  transition: 0.1s left, 0.1s bottom, 0.1s right;
+}
+
+.chart:hover .chart-tooltip
+{
+  display: block;
+}
+
+.chart-tooltip__date
+{
+  color: #9299a2;
+}
+
+.chart-tooltip__delta
+{
+  margin-left: 1rem;
+  color: #22a053;
+  height: 0.7rem;
+}
+
+.chart-tooltip__delta:before
+{
+  content: '';
+  display: inline-block;
+  margin-right: 0.5rem;
+  border: 0.7rem solid transparent;
+  border-width: 0.7rem 0.4rem;
+  border-bottom: 0.7rem solid #22a053;
+}
+
+.chart-tooltip__delta_negative
+{
+  color: #d32f2f;
+}
+
+.chart-tooltip__delta_negative:before
+{
+  margin-bottom: -0.7rem;
+  border-top: 0.7rem solid #d32f2f;
+  border-bottom-color: transparent;
+}
+
+
+
