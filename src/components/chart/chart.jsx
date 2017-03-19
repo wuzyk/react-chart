@@ -19,7 +19,7 @@ export default class Chart extends React.Component {
       points: [],
       gridLines: [],
       viewport: {},
-      showLongAxisTitles: true
+      showLongAxisTitles: true,
     };
 
     this.setViewport = this.setViewport.bind(this);
@@ -161,7 +161,11 @@ export default class Chart extends React.Component {
     } = this.state;
 
     return (
-      <div className="chart" ref={ref => (this.mainRef = ref)}>
+      <div
+        className="chart"
+        ref={ref => (this.mainRef = ref)}
+        style={{ height: this.props.height }}
+      >
         <div className="chart-y-axis" ref={ref => (this.yAxisRef = ref)}>
           {yLabels.map((label, index) => (
             <div className="chart-y-label" style={{ top: gridLines[index] }} key={label}>
@@ -195,10 +199,14 @@ export default class Chart extends React.Component {
 }
 
 Chart.propTypes = {
+  height: PropTypes.number,
   data: PropTypes.arrayOf(PropTypes.shape({
     date: PropTypes.string.isRequired,
     value: PropTypes.number.isRequired,
   })).isRequired,
+};
+Chart.defaultProps = {
+  height: 300,
 };
 
 function getNumberOrder(number) {
