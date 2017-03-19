@@ -11,7 +11,6 @@ function render() {
   ReactDOM.render(
     <div>
       <button onClick={render}>Generate new data</button>
-
       <div className="chart-box">
         <Chart data={generateData('2015-01-01', 365, 10, 100)} height={250} />
       </div>
