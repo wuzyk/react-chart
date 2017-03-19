@@ -35,7 +35,7 @@ function generateData(startDate, daysCount, minValue, maxValue) {
     const date = new Date(currentDate);
     date.setDate(date.getDate() + 1);
 
-    currentDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    currentDate = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}`;
   }
 
   return data;

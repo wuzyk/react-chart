@@ -19,6 +19,7 @@ export default class Chart extends React.Component {
       points: [],
       gridLines: [],
       viewport: {},
+      showLongAxisTitles: true
     };
 
     this.setViewport = this.setViewport.bind(this);
